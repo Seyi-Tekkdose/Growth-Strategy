@@ -4,23 +4,28 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle2 } from "lucide-react";
 
 interface StageZeroData {
   mission: string;
   vision: string;
+  coreValues: string;
   targetAudience: string;
   problemSolving: string;
   uniqueValue: string;
+  legalStructure: string;
 }
 
 export const StageZero = () => {
   const [data, setData] = useState<StageZeroData>({
     mission: "",
     vision: "",
+    coreValues: "",
     targetAudience: "",
     problemSolving: "",
     uniqueValue: "",
+    legalStructure: "",
   });
 
   useEffect(() => {
@@ -80,6 +85,18 @@ export const StageZero = () => {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="coreValues" className="text-base font-semibold">Core Values</Label>
+            <p className="text-sm text-muted-foreground">What principles guide your business decisions?</p>
+            <Textarea
+              id="coreValues"
+              placeholder="e.g., Integrity, Innovation, Customer-first..."
+              value={data.coreValues}
+              onChange={(e) => updateData("coreValues", e.target.value)}
+              className="min-h-[80px] resize-none"
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="targetAudience" className="text-base font-semibold">Target Audience</Label>
             <p className="text-sm text-muted-foreground">Who are your ideal customers?</p>
             <Input
@@ -113,6 +130,25 @@ export const StageZero = () => {
               className="min-h-[80px] resize-none"
             />
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="legalStructure" className="text-base font-semibold">Legal Structure</Label>
+            <p className="text-sm text-muted-foreground">Choose your business entity type</p>
+            <Select value={data.legalStructure} onValueChange={(value) => updateData("legalStructure", value)}>
+              <SelectTrigger id="legalStructure">
+                <SelectValue placeholder="Select legal structure" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sole-proprietorship">Sole Proprietorship</SelectItem>
+                <SelectItem value="partnership">Partnership</SelectItem>
+                <SelectItem value="llc">LLC (Limited Liability Company)</SelectItem>
+                <SelectItem value="corporation">Corporation (C-Corp)</SelectItem>
+                <SelectItem value="s-corporation">S-Corporation</SelectItem>
+                <SelectItem value="non-profit">Non-Profit</SelectItem>
+                <SelectItem value="cooperative">Cooperative</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </Card>
 
@@ -129,8 +165,16 @@ export const StageZero = () => {
               <p className="opacity-95">{data.vision}</p>
             </div>
             <div>
+              <p className="font-semibold opacity-90">Core Values:</p>
+              <p className="opacity-95">{data.coreValues}</p>
+            </div>
+            <div>
               <p className="font-semibold opacity-90">Target Audience:</p>
               <p className="opacity-95">{data.targetAudience}</p>
+            </div>
+            <div>
+              <p className="font-semibold opacity-90">Legal Structure:</p>
+              <p className="opacity-95">{data.legalStructure}</p>
             </div>
             <div>
               <p className="font-semibold opacity-90">Problem Solving:</p>
