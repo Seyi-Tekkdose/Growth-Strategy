@@ -14,6 +14,10 @@ interface StageTwoData {
   campaignGoal: string;
   targetChannels: string;
   budget: string;
+  mailchimpApiKey: string;
+  mailchimpAudienceId: string;
+  b2bPlatforms: { name: string; checked: boolean }[];
+  b2cPlatforms: { name: string; checked: boolean }[];
 }
 
 export const StageTwo = () => {
@@ -24,6 +28,22 @@ export const StageTwo = () => {
     campaignGoal: "",
     targetChannels: "",
     budget: "",
+    mailchimpApiKey: "",
+    mailchimpAudienceId: "",
+    b2bPlatforms: [
+      { name: "LinkedIn", checked: false },
+      { name: "Twitter/X", checked: false },
+      { name: "YouTube", checked: false },
+      { name: "Industry Forums", checked: false },
+      { name: "Webinars", checked: false },
+    ],
+    b2cPlatforms: [
+      { name: "Facebook", checked: false },
+      { name: "Instagram", checked: false },
+      { name: "TikTok", checked: false },
+      { name: "Pinterest", checked: false },
+      { name: "Snapchat", checked: false },
+    ],
   });
   const [keywordInput, setKeywordInput] = useState("");
 
@@ -52,8 +72,16 @@ export const StageTwo = () => {
     saveData(newData);
   };
 
-  const updateField = (field: keyof Omit<StageTwoData, "keywords">, value: string) => {
+  const updateField = (field: keyof Omit<StageTwoData, "keywords" | "b2bPlatforms" | "b2cPlatforms">, value: string) => {
     saveData({ ...data, [field]: value });
+  };
+
+  const togglePlatform = (type: "b2b" | "b2c", platformName: string) => {
+    const platformsKey = type === "b2b" ? "b2bPlatforms" : "b2cPlatforms";
+    const newPlatforms = data[platformsKey].map(p =>
+      p.name === platformName ? { ...p, checked: !p.checked } : p
+    );
+    saveData({ ...data, [platformsKey]: newPlatforms });
   };
 
   const isComplete = data.keywords.length > 0 && data.emailSubject && data.emailBody && data.campaignGoal;
@@ -126,6 +154,34 @@ export const StageTwo = () => {
               className="min-h-[150px] resize-none"
             />
           </div>
+
+          <div className="border-t pt-4 mt-4">
+            <h4 className="font-semibold mb-3">Mailchimp Integration</h4>
+            <p className="text-sm text-muted-foreground mb-3">
+              Connect your Mailchimp account to sync campaigns (requires Lovable Cloud for secure API handling)
+            </p>
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="mailchimpApiKey">Mailchimp API Key</Label>
+                <Input
+                  id="mailchimpApiKey"
+                  type="password"
+                  placeholder="Enter your Mailchimp API key"
+                  value={data.mailchimpApiKey}
+                  onChange={(e) => updateField("mailchimpApiKey", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="mailchimpAudienceId">Audience ID</Label>
+                <Input
+                  id="mailchimpAudienceId"
+                  placeholder="Enter your Mailchimp Audience ID"
+                  value={data.mailchimpAudienceId}
+                  onChange={(e) => updateField("mailchimpAudienceId", e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </Card>
 
@@ -161,6 +217,40 @@ export const StageTwo = () => {
                 value={data.budget}
                 onChange={(e) => updateField("budget", e.target.value)}
               />
+            </div>
+
+            <div className="border-t pt-4 mt-4">
+              <h4 className="font-semibold mb-3">B2B Social Platforms</h4>
+              <div className="space-y-2">
+                {data.b2bPlatforms.map((platform) => (
+                  <label key={platform.name} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={platform.checked}
+                      onChange={() => togglePlatform("b2b", platform.name)}
+                      className="rounded border-input"
+                    />
+                    <span className="text-sm">{platform.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-t pt-4 mt-4">
+              <h4 className="font-semibold mb-3">B2C Social Platforms</h4>
+              <div className="space-y-2">
+                {data.b2cPlatforms.map((platform) => (
+                  <label key={platform.name} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={platform.checked}
+                      onChange={() => togglePlatform("b2c", platform.name)}
+                      className="rounded border-input"
+                    />
+                    <span className="text-sm">{platform.name}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
         </Card>
