@@ -1,0 +1,148 @@
+import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2 } from "lucide-react";
+
+interface StageZeroData {
+  mission: string;
+  vision: string;
+  targetAudience: string;
+  problemSolving: string;
+  uniqueValue: string;
+}
+
+export const StageZero = () => {
+  const [data, setData] = useState<StageZeroData>({
+    mission: "",
+    vision: "",
+    targetAudience: "",
+    problemSolving: "",
+    uniqueValue: "",
+  });
+
+  useEffect(() => {
+    const saved = localStorage.getItem("stage-zero");
+    if (saved) {
+      setData(JSON.parse(saved));
+    }
+  }, []);
+
+  const updateData = (field: keyof StageZeroData, value: string) => {
+    const newData = { ...data, [field]: value };
+    setData(newData);
+    localStorage.setItem("stage-zero", JSON.stringify(newData));
+  };
+
+  const isComplete = Object.values(data).every(val => val.trim() !== "");
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-foreground">Zero – Concept & Research</h2>
+          <p className="text-muted-foreground mt-2">Build your business foundation with clear mission and vision</p>
+        </div>
+        {isComplete && (
+          <div className="flex items-center gap-2 text-success">
+            <CheckCircle2 className="h-5 w-5" />
+            <span className="font-medium">Complete</span>
+          </div>
+        )}
+      </div>
+
+      <Card className="p-6 shadow-card">
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="mission" className="text-base font-semibold">Mission Statement</Label>
+            <p className="text-sm text-muted-foreground">What is your company's purpose? Why do you exist?</p>
+            <Textarea
+              id="mission"
+              placeholder="We exist to..."
+              value={data.mission}
+              onChange={(e) => updateData("mission", e.target.value)}
+              className="min-h-[100px] resize-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="vision" className="text-base font-semibold">Vision Statement</Label>
+            <p className="text-sm text-muted-foreground">Where do you want to be in 5-10 years?</p>
+            <Textarea
+              id="vision"
+              placeholder="In the future, we will..."
+              value={data.vision}
+              onChange={(e) => updateData("vision", e.target.value)}
+              className="min-h-[100px] resize-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="targetAudience" className="text-base font-semibold">Target Audience</Label>
+            <p className="text-sm text-muted-foreground">Who are your ideal customers?</p>
+            <Input
+              id="targetAudience"
+              placeholder="e.g., Small business owners, Tech startups, etc."
+              value={data.targetAudience}
+              onChange={(e) => updateData("targetAudience", e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="problemSolving" className="text-base font-semibold">Problem You're Solving</Label>
+            <p className="text-sm text-muted-foreground">What pain point does your business address?</p>
+            <Textarea
+              id="problemSolving"
+              placeholder="Our customers struggle with..."
+              value={data.problemSolving}
+              onChange={(e) => updateData("problemSolving", e.target.value)}
+              className="min-h-[80px] resize-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="uniqueValue" className="text-base font-semibold">Your Unique Approach</Label>
+            <p className="text-sm text-muted-foreground">How is your solution different from competitors?</p>
+            <Textarea
+              id="uniqueValue"
+              placeholder="Unlike others, we..."
+              value={data.uniqueValue}
+              onChange={(e) => updateData("uniqueValue", e.target.value)}
+              className="min-h-[80px] resize-none"
+            />
+          </div>
+        </div>
+      </Card>
+
+      {isComplete && (
+        <Card className="p-6 bg-gradient-primary text-primary-foreground shadow-elevated">
+          <h3 className="text-xl font-bold mb-4">Your Business Foundation</h3>
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-semibold opacity-90">Mission:</p>
+              <p className="opacity-95">{data.mission}</p>
+            </div>
+            <div>
+              <p className="font-semibold opacity-90">Vision:</p>
+              <p className="opacity-95">{data.vision}</p>
+            </div>
+            <div>
+              <p className="font-semibold opacity-90">Target Audience:</p>
+              <p className="opacity-95">{data.targetAudience}</p>
+            </div>
+            <div>
+              <p className="font-semibold opacity-90">Problem Solving:</p>
+              <p className="opacity-95">{data.problemSolving}</p>
+            </div>
+            <div>
+              <p className="font-semibold opacity-90">Unique Approach:</p>
+              <p className="opacity-95">{data.uniqueValue}</p>
+            </div>
+          </div>
+        </Card>
+      )}
+    </div>
+  );
+};
