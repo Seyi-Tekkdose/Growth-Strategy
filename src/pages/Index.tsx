@@ -6,6 +6,7 @@ import { StageTwo } from "@/components/StageTwo";
 import { StageThree } from "@/components/StageThree";
 import { StageScale } from "@/components/StageScale";
 import { ExportButton } from "@/components/ExportButton";
+import { ImportFromUrl } from "@/components/ImportFromUrl";
 import { Lightbulb, Palette, Megaphone, Cog, TrendingUp } from "lucide-react";
 
 const Index = () => {
@@ -22,7 +23,10 @@ const Index = () => {
               </h1>
               <p className="text-muted-foreground mt-1">From concept to scale in 5 strategic stages</p>
             </div>
-            <ExportButton />
+            <div className="flex gap-3">
+              <ImportFromUrl />
+              <ExportButton />
+            </div>
           </div>
         </div>
       </header>
