@@ -5,7 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckCircle2, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Plus, Trash2, Sparkles } from "lucide-react";
+import { AIGeneratorModal } from "./AIGeneratorModal";
 
 interface Task {
   id: string;
@@ -39,6 +40,8 @@ export const StageThree = () => {
   const [newSopOutputs, setNewSopOutputs] = useState("");
   const [newSopCustomers, setNewSopCustomers] = useState("");
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [currentSipocField, setCurrentSipocField] = useState<{ field: "suppliers" | "inputs" | "process" | "outputs" | "customers"; name: string } | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("stage-three");
@@ -104,6 +107,22 @@ export const StageThree = () => {
     saveData(newData);
   };
 
+  const openAIGenerator = (field: "suppliers" | "inputs" | "process" | "outputs" | "customers", fieldName: string) => {
+    setCurrentSipocField({ field, name: fieldName });
+    setAiModalOpen(true);
+  };
+
+  const handleAIGenerate = (generatedContent: string) => {
+    if (currentSipocField) {
+      const field = currentSipocField.field;
+      if (field === "suppliers") setNewSopSuppliers(generatedContent);
+      else if (field === "inputs") setNewSopInputs(generatedContent);
+      else if (field === "process") setNewSopProcess(generatedContent);
+      else if (field === "outputs") setNewSopOutputs(generatedContent);
+      else if (field === "customers") setNewSopCustomers(generatedContent);
+    }
+  };
+
   const isComplete = data.sops.length > 0 && data.tasks.length > 0;
 
   return (
@@ -139,7 +158,18 @@ export const StageThree = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="sopSuppliers">Suppliers</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="sopSuppliers">Suppliers</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openAIGenerator("suppliers", "Suppliers")}
+                  className="h-7 px-2"
+                >
+                  <Sparkles className="h-3 w-3" />
+                </Button>
+              </div>
               <Textarea
                 id="sopSuppliers"
                 placeholder="Who provides the inputs?"
@@ -150,7 +180,18 @@ export const StageThree = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="sopInputs">Inputs</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="sopInputs">Inputs</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openAIGenerator("inputs", "Inputs")}
+                  className="h-7 px-2"
+                >
+                  <Sparkles className="h-3 w-3" />
+                </Button>
+              </div>
               <Textarea
                 id="sopInputs"
                 placeholder="What materials, data, or resources are needed?"
@@ -162,7 +203,18 @@ export const StageThree = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="sopProcess">Process</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="sopProcess">Process</Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => openAIGenerator("process", "Process Steps")}
+                className="h-7 px-2"
+              >
+                <Sparkles className="h-3 w-3" />
+              </Button>
+            </div>
             <Textarea
               id="sopProcess"
               placeholder="1. Step one&#10;2. Step two&#10;3. Step three..."
@@ -174,7 +226,18 @@ export const StageThree = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="sopOutputs">Outputs</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="sopOutputs">Outputs</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openAIGenerator("outputs", "Outputs")}
+                  className="h-7 px-2"
+                >
+                  <Sparkles className="h-3 w-3" />
+                </Button>
+              </div>
               <Textarea
                 id="sopOutputs"
                 placeholder="What is produced or delivered?"
@@ -185,7 +248,18 @@ export const StageThree = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="sopCustomers">Customers</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="sopCustomers">Customers</Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => openAIGenerator("customers", "Customers")}
+                  className="h-7 px-2"
+                >
+                  <Sparkles className="h-3 w-3" />
+                </Button>
+              </div>
               <Textarea
                 id="sopCustomers"
                 placeholder="Who receives the outputs?"
@@ -280,6 +354,13 @@ export const StageThree = () => {
           )}
         </div>
       </Card>
+
+      <AIGeneratorModal
+        open={aiModalOpen}
+        onOpenChange={setAiModalOpen}
+        fieldName={currentSipocField?.name || ""}
+        onGenerate={handleAIGenerate}
+      />
 
       {isComplete && (
         <Card className="p-6 bg-gradient-primary text-primary-foreground shadow-elevated">

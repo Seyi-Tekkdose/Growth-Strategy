@@ -5,7 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Sparkles } from "lucide-react";
+import { AIGeneratorModal } from "./AIGeneratorModal";
 
 interface StageZeroData {
   mission: string;
@@ -27,6 +28,8 @@ export const StageZero = () => {
     uniqueValue: "",
     legalStructure: "",
   });
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [currentField, setCurrentField] = useState<{ key: keyof StageZeroData; name: string } | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("stage-zero");
@@ -39,6 +42,17 @@ export const StageZero = () => {
     const newData = { ...data, [field]: value };
     setData(newData);
     localStorage.setItem("stage-zero", JSON.stringify(newData));
+  };
+
+  const openAIGenerator = (field: keyof StageZeroData, fieldName: string) => {
+    setCurrentField({ key: field, name: fieldName });
+    setAiModalOpen(true);
+  };
+
+  const handleAIGenerate = (generatedContent: string) => {
+    if (currentField) {
+      updateData(currentField.key, generatedContent);
+    }
   };
 
   const isComplete = Object.values(data).every(val => val.trim() !== "");
@@ -61,7 +75,19 @@ export const StageZero = () => {
       <Card className="p-6 shadow-card">
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="mission" className="text-base font-semibold">Mission Statement</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="mission" className="text-base font-semibold">Mission Statement</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => openAIGenerator("mission", "Mission Statement")}
+                className="h-8"
+              >
+                <Sparkles className="h-3.5 w-3.5 mr-1" />
+                AI Generate
+              </Button>
+            </div>
             <p className="text-sm text-muted-foreground">What is your company's purpose? Why do you exist?</p>
             <Textarea
               id="mission"
@@ -73,7 +99,19 @@ export const StageZero = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="vision" className="text-base font-semibold">Vision Statement</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="vision" className="text-base font-semibold">Vision Statement</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => openAIGenerator("vision", "Vision Statement")}
+                className="h-8"
+              >
+                <Sparkles className="h-3.5 w-3.5 mr-1" />
+                AI Generate
+              </Button>
+            </div>
             <p className="text-sm text-muted-foreground">Where do you want to be in 5-10 years?</p>
             <Textarea
               id="vision"
@@ -85,7 +123,19 @@ export const StageZero = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="coreValues" className="text-base font-semibold">Core Values</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="coreValues" className="text-base font-semibold">Core Values</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => openAIGenerator("coreValues", "Core Values")}
+                className="h-8"
+              >
+                <Sparkles className="h-3.5 w-3.5 mr-1" />
+                AI Generate
+              </Button>
+            </div>
             <p className="text-sm text-muted-foreground">What principles guide your business decisions?</p>
             <Textarea
               id="coreValues"
@@ -151,6 +201,13 @@ export const StageZero = () => {
           </div>
         </div>
       </Card>
+
+      <AIGeneratorModal
+        open={aiModalOpen}
+        onOpenChange={setAiModalOpen}
+        fieldName={currentField?.name || ""}
+        onGenerate={handleAIGenerate}
+      />
 
       {isComplete && (
         <Card className="p-6 bg-gradient-primary text-primary-foreground shadow-elevated">
