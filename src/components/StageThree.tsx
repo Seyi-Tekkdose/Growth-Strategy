@@ -15,7 +15,11 @@ interface Task {
 
 interface SOP {
   title: string;
-  steps: string;
+  suppliers: string;
+  inputs: string;
+  process: string;
+  outputs: string;
+  customers: string;
 }
 
 interface StageThreeData {
@@ -29,7 +33,11 @@ export const StageThree = () => {
     tasks: [],
   });
   const [newSopTitle, setNewSopTitle] = useState("");
-  const [newSopSteps, setNewSopSteps] = useState("");
+  const [newSopSuppliers, setNewSopSuppliers] = useState("");
+  const [newSopInputs, setNewSopInputs] = useState("");
+  const [newSopProcess, setNewSopProcess] = useState("");
+  const [newSopOutputs, setNewSopOutputs] = useState("");
+  const [newSopCustomers, setNewSopCustomers] = useState("");
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   useEffect(() => {
@@ -45,14 +53,25 @@ export const StageThree = () => {
   };
 
   const addSOP = () => {
-    if (newSopTitle.trim() && newSopSteps.trim()) {
+    if (newSopTitle.trim() && newSopProcess.trim()) {
       const newData = {
         ...data,
-        sops: [...data.sops, { title: newSopTitle, steps: newSopSteps }],
+        sops: [...data.sops, { 
+          title: newSopTitle, 
+          suppliers: newSopSuppliers,
+          inputs: newSopInputs,
+          process: newSopProcess,
+          outputs: newSopOutputs,
+          customers: newSopCustomers
+        }],
       };
       saveData(newData);
       setNewSopTitle("");
-      setNewSopSteps("");
+      setNewSopSuppliers("");
+      setNewSopInputs("");
+      setNewSopProcess("");
+      setNewSopOutputs("");
+      setNewSopCustomers("");
     }
   };
 
@@ -103,7 +122,10 @@ export const StageThree = () => {
       </div>
 
       <Card className="p-6 shadow-card">
-        <h3 className="text-xl font-bold mb-4">Standard Operating Procedures</h3>
+        <h3 className="text-xl font-bold mb-4">Standard Operating Procedures (SIPOC Model)</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Use the SIPOC framework: Suppliers, Inputs, Process, Outputs, Customers
+        </p>
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="sopTitle">Procedure Title</Label>
@@ -114,28 +136,99 @@ export const StageThree = () => {
               onChange={(e) => setNewSopTitle(e.target.value)}
             />
           </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="sopSuppliers">Suppliers</Label>
+              <Textarea
+                id="sopSuppliers"
+                placeholder="Who provides the inputs?"
+                value={newSopSuppliers}
+                onChange={(e) => setNewSopSuppliers(e.target.value)}
+                className="min-h-[80px] resize-none"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="sopInputs">Inputs</Label>
+              <Textarea
+                id="sopInputs"
+                placeholder="What materials, data, or resources are needed?"
+                value={newSopInputs}
+                onChange={(e) => setNewSopInputs(e.target.value)}
+                className="min-h-[80px] resize-none"
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
-            <Label htmlFor="sopSteps">Steps</Label>
+            <Label htmlFor="sopProcess">Process</Label>
             <Textarea
-              id="sopSteps"
+              id="sopProcess"
               placeholder="1. Step one&#10;2. Step two&#10;3. Step three..."
-              value={newSopSteps}
-              onChange={(e) => setNewSopSteps(e.target.value)}
+              value={newSopProcess}
+              onChange={(e) => setNewSopProcess(e.target.value)}
               className="min-h-[120px] resize-none"
             />
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="sopOutputs">Outputs</Label>
+              <Textarea
+                id="sopOutputs"
+                placeholder="What is produced or delivered?"
+                value={newSopOutputs}
+                onChange={(e) => setNewSopOutputs(e.target.value)}
+                className="min-h-[80px] resize-none"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="sopCustomers">Customers</Label>
+              <Textarea
+                id="sopCustomers"
+                placeholder="Who receives the outputs?"
+                value={newSopCustomers}
+                onChange={(e) => setNewSopCustomers(e.target.value)}
+                className="min-h-[80px] resize-none"
+              />
+            </div>
+          </div>
+
           <Button onClick={addSOP} className="w-full">
             <Plus className="h-4 w-4 mr-2" />
-            Add SOP
+            Add SIPOC Procedure
           </Button>
         </div>
 
         {data.sops.length > 0 && (
           <div className="mt-6 space-y-4">
             {data.sops.map((sop, index) => (
-              <Card key={index} className="p-4 bg-secondary">
-                <h4 className="font-semibold mb-2">{sop.title}</h4>
-                <p className="text-sm text-muted-foreground whitespace-pre-line">{sop.steps}</p>
+              <Card key={index} className="p-5 bg-secondary">
+                <h4 className="font-semibold text-lg mb-4">{sop.title}</h4>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                  <div>
+                    <p className="text-xs font-semibold text-primary mb-2">SUPPLIERS</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">{sop.suppliers || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-primary mb-2">INPUTS</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">{sop.inputs || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-primary mb-2">PROCESS</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">{sop.process}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-primary mb-2">OUTPUTS</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">{sop.outputs || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-primary mb-2">CUSTOMERS</p>
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">{sop.customers || "—"}</p>
+                  </div>
+                </div>
               </Card>
             ))}
           </div>
