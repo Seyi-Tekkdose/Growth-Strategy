@@ -5,7 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Plus, X } from "lucide-react";
+import { CheckCircle2, Plus, X, Sparkles } from "lucide-react";
+import { AIGeneratorModal } from "./AIGeneratorModal";
 
 interface StageTwoData {
   keywords: string[];
@@ -46,6 +47,8 @@ export const StageTwo = () => {
     ],
   });
   const [keywordInput, setKeywordInput] = useState("");
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [currentField, setCurrentField] = useState<{ key: keyof Omit<StageTwoData, "keywords" | "b2bPlatforms" | "b2cPlatforms">; name: string } | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("stage-two");
@@ -82,6 +85,17 @@ export const StageTwo = () => {
       p.name === platformName ? { ...p, checked: !p.checked } : p
     );
     saveData({ ...data, [platformsKey]: newPlatforms });
+  };
+
+  const openAIGenerator = (field: keyof Omit<StageTwoData, "keywords" | "b2bPlatforms" | "b2cPlatforms">, fieldName: string) => {
+    setCurrentField({ key: field, name: fieldName });
+    setAiModalOpen(true);
+  };
+
+  const handleAIGenerate = (generatedContent: string) => {
+    if (currentField) {
+      updateField(currentField.key, generatedContent);
+    }
   };
 
   const isComplete = data.keywords.length > 0 && data.emailSubject && data.emailBody && data.campaignGoal;
@@ -287,6 +301,13 @@ export const StageTwo = () => {
           </Card>
         )}
       </div>
+
+      <AIGeneratorModal
+        open={aiModalOpen}
+        onOpenChange={setAiModalOpen}
+        fieldName={currentField?.name || ""}
+        onGenerate={handleAIGenerate}
+      />
     </div>
   );
 };

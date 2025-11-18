@@ -5,8 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CheckCircle2, Download } from "lucide-react";
+import { CheckCircle2, Download, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { AIGeneratorModal } from "./AIGeneratorModal";
 
 interface StageScaleData {
   fundingReadiness: {
@@ -48,6 +49,8 @@ export const StageScale = () => {
       hasTeam: "",
     },
   });
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [currentField, setCurrentField] = useState<{ section: "funding" | "export"; field: string; name: string } | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("stage-scale");
@@ -91,6 +94,21 @@ export const StageScale = () => {
   const calculateReadinessScore = () => {
     const yesCount = Object.values(data.quizAnswers).filter(val => val === "yes").length;
     return Math.round((yesCount / 3) * 100);
+  };
+
+  const openAIGenerator = (section: "funding" | "export", field: string, fieldName: string) => {
+    setCurrentField({ section, field, name: fieldName });
+    setAiModalOpen(true);
+  };
+
+  const handleAIGenerate = (generatedContent: string) => {
+    if (currentField) {
+      if (currentField.section === "funding") {
+        updateFundingField(currentField.field as keyof StageScaleData["fundingReadiness"], generatedContent);
+      } else {
+        updateExportField(currentField.field as keyof StageScaleData["exportPlan"], generatedContent);
+      }
+    }
   };
 
   return (
@@ -275,6 +293,13 @@ export const StageScale = () => {
           </div>
         </Card>
       </div>
+
+      <AIGeneratorModal
+        open={aiModalOpen}
+        onOpenChange={setAiModalOpen}
+        fieldName={currentField?.name || ""}
+        onGenerate={handleAIGenerate}
+      />
 
       {isComplete && (
         <Card className="p-6 bg-gradient-primary text-primary-foreground shadow-elevated">

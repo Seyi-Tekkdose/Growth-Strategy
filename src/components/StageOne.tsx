@@ -4,7 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, Sparkles } from "lucide-react";
+import { AIGeneratorModal } from "./AIGeneratorModal";
 
 interface StageOneData {
   brandName: string;
@@ -36,6 +38,8 @@ export const StageOne = () => {
       brandGuidelineCreated: false,
     },
   });
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [currentField, setCurrentField] = useState<{ key: keyof Omit<StageOneData, "checklist">; name: string } | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("stage-one");
@@ -57,6 +61,17 @@ export const StageOne = () => {
     };
     setData(newData);
     localStorage.setItem("stage-one", JSON.stringify(newData));
+  };
+
+  const openAIGenerator = (field: keyof Omit<StageOneData, "checklist">, fieldName: string) => {
+    setCurrentField({ key: field, name: fieldName });
+    setAiModalOpen(true);
+  };
+
+  const handleAIGenerate = (generatedContent: string) => {
+    if (currentField) {
+      updateData(currentField.key, generatedContent);
+    }
   };
 
   const checklistComplete = Object.values(data.checklist).every(val => val === true);
@@ -93,7 +108,19 @@ export const StageOne = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="tagline">Tagline</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="tagline">Tagline</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openAIGenerator("tagline", "Tagline")}
+                  className="h-7"
+                >
+                  <Sparkles className="h-3 w-3 mr-1" />
+                  AI
+                </Button>
+              </div>
               <Input
                 id="tagline"
                 placeholder="A memorable one-liner"
@@ -186,7 +213,19 @@ export const StageOne = () => {
       </div>
 
       <Card className="p-6 shadow-card">
-        <h3 className="text-xl font-bold mb-4">Unique Value Proposition Generator</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold">Unique Value Proposition Generator</h3>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => openAIGenerator("uvp", "Unique Value Proposition")}
+            className="h-8"
+          >
+            <Sparkles className="h-3.5 w-3.5 mr-1" />
+            AI Generate
+          </Button>
+        </div>
         <div className="space-y-2">
           <Label htmlFor="uvp">Your UVP</Label>
           <p className="text-sm text-muted-foreground">
@@ -201,6 +240,13 @@ export const StageOne = () => {
           />
         </div>
       </Card>
+
+      <AIGeneratorModal
+        open={aiModalOpen}
+        onOpenChange={setAiModalOpen}
+        fieldName={currentField?.name || ""}
+        onGenerate={handleAIGenerate}
+      />
 
       {isComplete && (
         <Card className="p-6 bg-gradient-primary text-primary-foreground shadow-elevated">
