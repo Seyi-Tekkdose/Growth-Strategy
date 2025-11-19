@@ -42,15 +42,81 @@ export const ImportFromUrl = () => {
 
     setIsProcessing(true);
 
-    // Simulate processing delay (in real implementation, this would call AI backend)
-    setTimeout(() => {
+    try {
+      // Call backend API to scrape the website
+      const response = await fetch('/api/scrape', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: url,
+          sections: sections,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to scrape website');
+      }
+
+      // Store the scraped data in localStorage for each stage
+      if (result.data) {
+        // Store Stage Zero data
+        if (sections.concept) {
+          const stageZeroData = localStorage.getItem('stage-zero');
+          const existingData = stageZeroData ? JSON.parse(stageZeroData) : {};
+          
+          const updatedStageZero = {
+            ...existingData,
+            ...(result.data.brandName && { businessName: result.data.brandName }),
+            ...(result.data.mission && { mission: result.data.mission }),
+            ...(result.data.vision && { vision: result.data.vision }),
+            ...(result.data.coreValues && { coreValues: result.data.coreValues }),
+            ...(result.data.targetAudience && { targetAudience: result.data.targetAudience }),
+            ...(result.data.problemSolving && { problemSolving: result.data.problemSolving }),
+            ...(result.data.uniqueValue && { uniqueValue: result.data.uniqueValue }),
+          };
+          
+          localStorage.setItem('stage-zero', JSON.stringify(updatedStageZero));
+        }
+
+        // Store Stage One data
+        if (sections.brand) {
+          const stageOneData = localStorage.getItem('stage-one');
+          const existingData = stageOneData ? JSON.parse(stageOneData) : {};
+          
+          const updatedStageOne = {
+            ...existingData,
+            ...(result.data.brandName && { brandName: result.data.brandName }),
+            ...(result.data.tagline && { tagline: result.data.tagline }),
+            ...(result.data.brandColors && { brandColors: result.data.brandColors }),
+            ...(result.data.targetEmotion && { targetEmotion: result.data.targetEmotion }),
+            ...(result.data.uvp && { uvp: result.data.uvp }),
+          };
+          
+          localStorage.setItem('stage-one', JSON.stringify(updatedStageOne));
+        }
+
+        // Trigger a storage event to update components
+        window.dispatchEvent(new Event('storage'));
+      }
+
       setIsProcessing(false);
       setOpen(false);
       toast.success("Data imported successfully! Check the populated sections.", {
-        description: "AI has analyzed your URL and filled relevant fields.",
+        description: "Website data has been analyzed and filled relevant fields.",
       });
       setUrl("");
-    }, 2000);
+      
+    } catch (error) {
+      console.error('Import error:', error);
+      setIsProcessing(false);
+      toast.error("Failed to import data", {
+        description: error instanceof Error ? error.message : "Please make sure the backend server is running (npm run server:dev)",
+      });
+    }
   };
 
   const toggleSection = (section: keyof typeof sections) => {
@@ -72,7 +138,7 @@ export const ImportFromUrl = () => {
             Import Business Data
           </DialogTitle>
           <DialogDescription>
-            Enter your website or portfolio URL. AI will analyze and auto-populate relevant sections.
+            Enter your website or portfolio URL. The scraper will analyze and auto-populate relevant sections including business name, mission, vision, and brand identity.
           </DialogDescription>
         </DialogHeader>
 
@@ -106,7 +172,10 @@ export const ImportFromUrl = () => {
                   htmlFor="concept"
                   className="text-sm cursor-pointer flex-1 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Stage Zero: Concept & Research
+                  <div className="font-medium">Stage Zero: Concept & Research</div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Business name, mission, vision, values, target audience
+                  </div>
                 </label>
               </div>
 
@@ -121,7 +190,10 @@ export const ImportFromUrl = () => {
                   htmlFor="brand"
                   className="text-sm cursor-pointer flex-1 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Stage One: Brand Identity
+                  <div className="font-medium">Stage One: Brand Identity</div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Brand name, tagline, colors, UVP
+                  </div>
                 </label>
               </div>
 
@@ -136,7 +208,10 @@ export const ImportFromUrl = () => {
                   htmlFor="marketing"
                   className="text-sm cursor-pointer flex-1 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Stage Two: Marketing Campaigns
+                  <div className="font-medium">Stage Two: Marketing Campaigns</div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Coming soon
+                  </div>
                 </label>
               </div>
 
