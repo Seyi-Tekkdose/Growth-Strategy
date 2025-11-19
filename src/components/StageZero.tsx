@@ -9,6 +9,7 @@ import { CheckCircle2, Sparkles } from "lucide-react";
 import { AIGeneratorModal } from "./AIGeneratorModal";
 
 interface StageZeroData {
+  businessName: string;
   mission: string;
   vision: string;
   coreValues: string;
@@ -20,6 +21,7 @@ interface StageZeroData {
 
 export const StageZero = () => {
   const [data, setData] = useState<StageZeroData>({
+    businessName: "",
     mission: "",
     vision: "",
     coreValues: "",
@@ -36,6 +38,20 @@ export const StageZero = () => {
     if (saved) {
       setData(JSON.parse(saved));
     }
+
+    // Listen for storage events to refresh data when imported
+    const handleStorageChange = () => {
+      const updated = localStorage.getItem("stage-zero");
+      if (updated) {
+        setData(JSON.parse(updated));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const updateData = (field: keyof StageZeroData, value: string) => {
@@ -74,6 +90,17 @@ export const StageZero = () => {
 
       <Card className="p-6 shadow-card">
         <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="businessName" className="text-base font-semibold">Business/Brand Name</Label>
+            <p className="text-sm text-muted-foreground">What is your business or brand called?</p>
+            <Input
+              id="businessName"
+              placeholder="e.g., Acme Solutions, TechFlow, etc."
+              value={data.businessName}
+              onChange={(e) => updateData("businessName", e.target.value)}
+            />
+          </div>
+
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="mission" className="text-base font-semibold">Mission Statement</Label>
@@ -213,6 +240,10 @@ export const StageZero = () => {
         <Card className="p-6 bg-gradient-primary text-primary-foreground shadow-elevated">
           <h3 className="text-xl font-bold mb-4">Your Business Foundation</h3>
           <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-semibold opacity-90">Business Name:</p>
+              <p className="opacity-95">{data.businessName}</p>
+            </div>
             <div>
               <p className="font-semibold opacity-90">Mission:</p>
               <p className="opacity-95">{data.mission}</p>

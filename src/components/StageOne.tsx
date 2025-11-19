@@ -46,6 +46,20 @@ export const StageOne = () => {
     if (saved) {
       setData(JSON.parse(saved));
     }
+
+    // Listen for storage events to refresh data when imported
+    const handleStorageChange = () => {
+      const updated = localStorage.getItem("stage-one");
+      if (updated) {
+        setData(JSON.parse(updated));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const updateData = (field: keyof Omit<StageOneData, "checklist">, value: string) => {

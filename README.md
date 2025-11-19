@@ -1,8 +1,78 @@
-# Welcome to your Lovable project
+# Growth Strategy App 🚀
+
+A comprehensive business growth planning application with AI-powered web scraping capabilities.
+
+## ✨ New Feature: Web Scraper
+
+**Automatically extract business information from any website!**
+
+Simply enter your website URL and let Puppeteer extract:
+- Mission & Vision statements
+- Brand identity information
+- Core values
+- Target audience
+- Unique value propositions
+- And more!
+
+👉 **[Read the Web Scraper Guide](WEB_SCRAPER_GUIDE.md)** for detailed instructions.
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/40cb5110-192b-40c1-b215-f4df7ee7bedc
+
+## Quick Start
+
+### Frontend + Backend
+
+```sh
+# Terminal 1: Start the backend server
+npm run server:dev
+
+# Terminal 2: Start the frontend
+npm run dev
+```
+
+Visit `http://localhost:8080` to use the app!
+
+## Available Scripts
+
+- `npm run dev` - Start frontend development server
+- `npm run server` - Start backend API server
+- `npm run server:dev` - Start backend with auto-reload
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+
+## Technologies
+
+**Frontend:**
+- React + TypeScript
+- Vite
+- shadcn-ui
+- Tailwind CSS
+- Lucide React (icons)
+
+**Backend:**
+- Node.js + Express
+- Puppeteer (web scraping)
+- TypeScript
+
+## Features
+
+### 📝 Multi-Stage Growth Planning
+- **Stage Zero**: Concept & Research
+- **Stage One**: Brand & MVP
+- **Stage Two**: Marketing Campaigns
+- **Stage Three**: Operations & SOPs
+- **Stage Scale**: Growth & Funding
+
+### 🤖 AI-Powered Tools
+- **Import from URL**: Automatically extract business data from websites
+- **AI Content Generator**: Generate mission statements, taglines, and more
+
+### 💾 Data Persistence
+- Local storage for all form data
+- Export/import functionality
+- Progress tracking
 
 ## How can I edit this code?
 
@@ -29,10 +99,10 @@ git clone <YOUR_GIT_URL>
 # Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Install dependencies
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development
 npm run dev
 ```
 
@@ -44,30 +114,64 @@ npm run dev
 
 **Use GitHub Codespaces**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- Click "Code" → "Codespaces" → "New codespace"
+- Edit and commit directly in the browser
 
-## What technologies are used for this project?
+## 📚 Documentation
 
-This project is built with:
+- **[Web Scraper Guide](WEB_SCRAPER_GUIDE.md)** - Complete guide to using the web scraper
+- **[Implementation Summary](IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
+- **[Server README](server/README.md)** - Backend server documentation
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🚀 Deployment
 
-## How can I deploy this project?
+Deploy via [Lovable](https://lovable.dev/projects/40cb5110-192b-40c1-b215-f4df7ee7bedc):
+- Click Share → Publish
 
-Simply open [Lovable](https://lovable.dev/projects/40cb5110-192b-40c1-b215-f4df7ee7bedc) and click on Share -> Publish.
+### Custom Domain
 
-## Can I connect a custom domain to my Lovable project?
+Connect a custom domain in Project > Settings > Domains.
 
-Yes, you can!
+[Read more about custom domains](https://docs.lovable.dev/features/custom-domain#custom-domain)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🛠️ Project Structure
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```
+Growth-Strategy/
+├── src/                    # Frontend source code
+│   ├── components/         # React components
+│   ├── pages/             # Page components
+│   ├── hooks/             # Custom hooks
+│   └── lib/               # Utilities
+├── server/                 # Backend API server
+│   ├── index.ts           # Express server
+│   ├── scraper.ts         # Puppeteer scraping logic
+│   └── README.md          # Server documentation
+├── public/                 # Static assets
+└── docs/                   # Documentation
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📝 License
+
+This project is private and proprietary.
+
+## 🎉 What's New
+
+### v1.1.0 - Web Scraper Integration
+- ✨ Puppeteer-based web scraping
+- 🔍 Automatic business information extraction
+- 🎯 Smart data mapping to form fields
+- 🚀 Background processing with loading states
+- ✅ Error handling and validation
+
+---
+
+Built with ❤️ using React, TypeScript, and Puppeteer
